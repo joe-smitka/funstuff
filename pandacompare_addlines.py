@@ -32,6 +32,16 @@ df2 = pd.read_excel(decrypted_file2)
 df1.set_index(id_column, inplace=True)
 df2.set_index(id_column, inplace=True)
 
+# Debugging: Check for duplicate IDs
+dupes1 = df1.index[df1.index.duplicated()].unique()
+dupes2 = df2.index[df2.index.duplicated()].unique()
+
+if not dupes1.empty:
+    print("Duplicate IDs in file1.xlsx:", dupes1.tolist())
+if not dupes2.empty:
+    print("Duplicate IDs in file2.xlsx:", dupes2.tolist())
+
+
 # Include all IDs from both files
 all_ids = df1.index.union(df2.index)
 df1 = df1.reindex(all_ids)
