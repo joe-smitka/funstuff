@@ -1,10 +1,29 @@
 import pandas as pd
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill
+import msoffcrypto
+import io
+
+# Decrypt file into memory
+def decrypt_excel(file_path, password):
+    decrypted = io.BytesIO()
+    with open(file_path, "rb") as f:
+        office_file = msoffcrypto.OfficeFile(f)
+        office_file.load_key(password=password)
+        office_file.decrypt(decrypted)
+    decrypted.seek(0)
+    return decrypted
+
+# Use pandas on the decrypted file
+decrypted_file1 = decrypt_excel("file1.xlsx", "yourpassword")
+decrypted_file2 = decrypt_excel("file2.xlsx", "yourpassword")
+
+df1 = pd.read_excel(decrypted_file1)
+df2 = pd.read_excel(decrypted_file2)
 
 # Load both Excel files
-df1 = pd.read_excel("file1.xlsx")
-df2 = pd.read_excel("file2.xlsx")
+#df1 = pd.read_excel("file1.xlsx")
+#df2 = pd.read_excel("file2.xlsx")
 
 # Create a difference dataframe
 diff_df = df1.ne(df2)
